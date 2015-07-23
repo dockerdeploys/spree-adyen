@@ -81,5 +81,18 @@ class AdyenNotification < ActiveRecord::Base
         payment.invalidate!
       end
     end
+
+    if successful_authorisation?
+      payment = Spree::Payment.find_by(response_code: psp_reference)
+      order = Spree::Order.find_by(number: merchant_reference)
+      if !payment && order && !order.complete?
+        order.payments.create!(
+          amount: order.total,
+          payment_method: Spree::Gateway::AdyenHPP.last,
+          response_code: psp_reference
+        )
+        order.next
+      end
+    end
   end
 end

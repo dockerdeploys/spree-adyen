@@ -12,6 +12,14 @@ module Spree
         redirect_to checkout_state_path(order.state) and return
       end
 
+      unless order
+        order = Spree::Order.find_by(number: params[:merchantReference])
+        if order.complete?
+          flash.notice = Spree.t(:order_processed_successfully)
+          redirect_to order_path(order, :token => order.guest_token) and return
+        end
+      end
+
       # cant set payment to complete here due to a validation
       # in order transition from payment to complete (it requires at
       # least one pending payment)
