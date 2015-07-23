@@ -77,6 +77,12 @@ module Spree
           order.next
 
           if order.complete?
+            # This is a hack - for some reason the payment_state isn't being persisted
+            # and where being stored in the database as null. Really the spree checkout process
+            # should take care of this and we shouldn't have to set them manually.
+            # We must be doing something wrong...
+            order.update_attribute :payment_state, 'paid'
+
             flash.notice = Spree.t(:order_processed_successfully)
             redirect_to order_path(order, :token => order.guest_token)
           else
