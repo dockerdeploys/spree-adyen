@@ -85,7 +85,7 @@ class AdyenNotification < ActiveRecord::Base
     if successful_authorisation?
       payment = Spree::Payment.find_by(response_code: psp_reference)
       order = Spree::Order.find_by(number: merchant_reference)
-      logger.info "HOPPINGER DEBUG: before order.next - #{DateTime.current} - #{order.inspect}"
+      logger.info "HOPPINGER_DEBUG: before order.next - #{DateTime.current} - #{order.inspect}"
 
       if !payment && order && !order.complete?
         order.payments.create!(
@@ -94,7 +94,7 @@ class AdyenNotification < ActiveRecord::Base
           response_code: psp_reference
         )
         order.next
-        logger.info "HOPPINGER DEBUG: after order.next - #{DateTime.current} - #{order.inspect}"
+        logger.info "HOPPINGER_DEBUG: after order.next - #{DateTime.current} - #{order.inspect}"
       end
     end
   end
