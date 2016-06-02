@@ -77,7 +77,7 @@ class AdyenNotification < ActiveRecord::Base
   def handle!
     if (authorisation? || capture?) && !success?
       payment = Spree::Payment.find_by(response_code: psp_reference)
-      if payment && !payment.failed? && !payment.invalid?
+      if payment && !payment.failed? && !payment.invalid? && !payment.complete?
         payment.invalidate!
       end
     end
